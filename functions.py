@@ -1,3 +1,4 @@
+import sys
 from datetime import timedelta
 import datetime as dt
 import glob
@@ -15,6 +16,9 @@ def get_max_mozzeno_file(folder_path, file_type):
     for item in files:
         if 'notes' in item:
             mozzeno_file_list.append(item)
+    if not mozzeno_file_list:
+        print('No valid Mozzeno file found!')
+        sys.exit()
     max_file = max(mozzeno_file_list, key=os.path.getctime)
     return max_file
 
@@ -22,22 +26,24 @@ def delete_file(max_file):
     max_file = max_file
     if os.path.isfile(max_file):
         os.remove(max_file)
-        print('Successfully deleted')
+        print('New information successfully uploaded.')
+        print('File successfully deleted.')
     else:
         print('Not deleted')
 
-def can_we_delete(max_file):
-    max_file = max_file
-    today = dt.date.today()
-    year = str(today.year)
-    start_pos_date = max_file.find(year)
-    end_pos_date = start_pos_date + 8
-    full_date = max_file[start_pos_date:end_pos_date]
-    full_date = dt.datetime.strptime(full_date, '%Y%m%d')
-    full_date = full_date.date()
-    if today < full_date:
-        answer = 'N'
-    else:
-        answer = 'Y'
-    return answer
-
+def status_payment(old_list):
+    status_number = []
+    on_time = 'Op tijd'
+    was_early = 'terugbetaling'
+    too_late = 'achterstallig'
+    for text in old_list:
+        if on_time in text:
+            new_status = 1
+            status_number.append(new_status)
+        elif was_early in text:
+            new_status = 2
+            status_number.append(new_status)
+        elif too_late in text:
+            new_status = 3
+            status_number.append(new_status)
+    return status_number
