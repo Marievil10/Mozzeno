@@ -11,8 +11,7 @@ from fixed_values import df_percent, start_capital, bonus_received, gain_2023
 pd.set_option('future.no_silent_downcasting', True)
 
 # connecting to the correct file
-sheet = get_credentials('Revolut & Degiro', 'Mozzeno')
-
+sheet = get_credentials('Test_connection_sheets', 'Marie')
 
 # a check to see if Withdrawn is already filled in, basically to see if the sheet
 # has already been filled in general, or the script has already been used
@@ -31,7 +30,7 @@ else:
             withdrawn = test + change_how_much
 
 # finding the correct file in the download folder
-folder_path = r'your_path'
+folder_path = r'your path'
 file_type = r'/*xlsx'
 max_file = get_max_mozzeno_file(folder_path, file_type)
 df_file = pd.read_excel(max_file)
@@ -83,7 +82,9 @@ value_remaining = df['Remaining'].sum()
 status_text = 'Good'
 for x in df['Status']:
     if x not in range(1, 3):
-        status_text = 'Panic'
+        status_text = 'Anticipating'
+        if x not in range(1, 4):
+            status_text = 'Panic'
 
 # the last ever date you receive a payment
 latest_paid_back = max(df['Fully paid back'])

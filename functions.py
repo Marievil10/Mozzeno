@@ -35,6 +35,7 @@ def status_payment(old_list):
     status_number = []
     on_time = 'Op tijd'
     was_early = 'terugbetaling'
+    promise = 'Betalingsbelofte'
     too_late = 'achterstallig'
     for text in old_list:
         if on_time in text:
@@ -43,7 +44,10 @@ def status_payment(old_list):
         elif was_early in text:
             new_status = 2
             status_number.append(new_status)
-        elif too_late in text:
+        elif promise in text:
             new_status = 3
+            status_number.append(new_status)
+        elif too_late in text:
+            new_status = 4
             status_number.append(new_status)
     return status_number
