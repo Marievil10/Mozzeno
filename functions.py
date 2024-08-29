@@ -50,4 +50,7 @@ def status_payment(old_list):
         elif too_late in text:
             new_status = 4
             status_number.append(new_status)
+        else:
+            new_status = 0
+            status_number.append(new_status)
     return status_number

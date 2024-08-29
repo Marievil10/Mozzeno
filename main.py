@@ -11,7 +11,7 @@ from fixed_values import df_percent, start_capital, bonus_received, gain_2023
 pd.set_option('future.no_silent_downcasting', True)
 
 # connecting to the correct file
-sheet = get_credentials('Test_connection_sheets', 'Marie')
+sheet = get_credentials('name of file', 'name of sheet')
 
 # a check to see if Withdrawn is already filled in, basically to see if the sheet
 # has already been filled in general, or the script has already been used
@@ -19,24 +19,26 @@ cell = sheet.find('Withdrawn')
 if cell is None:
     withdrawn = 0.00
 else:
-    test = sheet.cell(cell.row + 1, cell.col).value
-    if test is None:
+    original_withdrawn = sheet.cell(cell.row + 1, cell.col).value
+    if original_withdrawn is None:
         withdrawn = 0.00
     else:
         did_you_deposit_extra = input('Did your invested money change (deposit/withdraw)? Y/N ')
-        test = float(test.replace(',', '.').strip())
+        original_withdrawn = float(original_withdrawn.replace(',', '.').strip())
         if did_you_deposit_extra == 'Y':
             change_how_much = float(input('With much? '))
-            withdrawn = test + change_how_much
+            withdrawn = original_withdrawn + change_how_much
+        else:
+            withdrawn = original_withdrawn
 
 # finding the correct file in the download folder
-folder_path = r'your path'
+folder_path = r'your_path'
 file_type = r'/*xlsx'
 max_file = get_max_mozzeno_file(folder_path, file_type)
 df_file = pd.read_excel(max_file)
 sheet.clear()
 
-# creation of all the dataframes based on the csv-file
+# creation of all the dataframes based on the csv-file (Dutch)
 df = df_file.copy()
 df = df[['Lening toegekend op', 'Uw inschrijving', 'Terugbetaald kapitaal',
          'Rente', 'Vooruitgang', 'Looptijd', 'Status']]
@@ -80,11 +82,12 @@ value_remaining = df['Remaining'].sum()
 
 # in case there is a payment overdue, we will have the status 'panic'
 status_text = 'Good'
-for x in df['Status']:
-    if x not in range(1, 3):
+unique_values = df.Status.unique()
+if 4 in unique_values:
+    status_text = 'Panic'
+else:
+    if 3 in unique_values:
         status_text = 'Anticipating'
-        if x not in range(1, 4):
-            status_text = 'Panic'
 
 # the last ever date you receive a payment
 latest_paid_back = max(df['Fully paid back'])
@@ -98,7 +101,8 @@ df.sort_index(inplace=True)
 # filling in df3
 # filtering on only the ongoing, on time payments, as they are the most certain
 df3['Status'] = status_payment(df3['Status'])
-df3 = df3[df3['Status'] == 1]
+status_options = [1, 3, 4]
+df3 = df3[df3['Status'].isin(status_options)]
 df3['Bruto'] = round(df3['Bruto'], 2)
 df3 = pd.merge(df3, df_percent, on='Bruto')
 df3['Total projected gain'] = round(df3['Node value'] * df3['Netto'] / 100, 2)
