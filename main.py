@@ -5,7 +5,7 @@ from functions import get_max_mozzeno_file, delete_file, status_payment
 import pandas as pd
 from datetime import date
 import gspread_dataframe
-from fixed_values import df_percent, start_capital, bonus_received, gain_2023
+from fixed_values import df_percent, bonus_received, gain_2023, start_capital
 
 # received a Future Warning
 pd.set_option('future.no_silent_downcasting', True)
@@ -15,21 +15,42 @@ sheet = get_credentials('name of file', 'name of sheet')
 
 # a check to see if Withdrawn is already filled in, basically to see if the sheet
 # has already been filled in general, or the script has already been used
-cell = sheet.find('Withdrawn')
-if cell is None:
+money_action = input('Did you withdraw or deposit money? Y/N ')
+cell1 = sheet.find('Withdrawn')
+if cell1 is None:
     withdrawn = 0.00
 else:
-    original_withdrawn = sheet.cell(cell.row + 1, cell.col).value
+    original_withdrawn = sheet.cell(cell1.row + 1, cell1.col).value
     if original_withdrawn is None:
         withdrawn = 0.00
     else:
-        did_you_deposit_extra = input('Did your invested money change (deposit/withdraw)? Y/N ')
+        did_you_withdraw = 'N'
+        if money_action == 'Y':
+            did_you_withdraw = input('Did you withdraw money? Y/N ')
         original_withdrawn = float(original_withdrawn.replace(',', '.').strip())
-        if did_you_deposit_extra == 'Y':
-            change_how_much = float(input('With much? '))
+        if did_you_withdraw == 'Y':
+            change_how_much = float(input('How much? '))
             withdrawn = original_withdrawn + change_how_much
         else:
             withdrawn = original_withdrawn
+
+cell2 = sheet.find('Start capital')
+if cell2 is None:
+    start_capital = start_capital
+else:
+    original_start_capital = sheet.cell(cell2.row + 1, cell2.col).value
+    if original_start_capital is None:
+        start_capital = start_capital
+    else:
+        did_you_deposit = 'N'
+        if money_action == 'Y':
+            did_you_deposit = input('Did you deposit money? Y/N ')
+        original_start_capital = float(original_start_capital.replace(',', '.').strip())
+        if did_you_deposit == 'Y':
+            change_how_much = float(input('How much? '))
+            start_capital = original_start_capital + change_how_much
+        else:
+            start_capital = original_start_capital
 
 # finding the correct file in the download folder
 folder_path = r'your_path'
