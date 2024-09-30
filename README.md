@@ -14,10 +14,10 @@ The Python version of this project is 3.10.
 This project uses both well-known packages as well as some custom functions and fixed values. They can be found in the following files:
 - main.py: the main file where everything happens, of course
 - functions.py: custom functions made for this project
-- fixed_values.py: fixed values for me personally, but can be adjusted to your situation. This also includes a dataframe of the gross and net percentages of Mozzeno which will be used in one of the dataframes
+- fixed_values.py: fixed values for me personally, but can be adjusted to your situation. This also includes a dataframe of the gross and net percentages of Mozzeno which will be used in one of the dataframes. 
 
-> [!CAUTION]
-> Only Dutch is supported (for now).
+> [!WARNING]
+> This also includes the determination of your language (Dutch or French).
 
 ### Connection to Google Sheets
 

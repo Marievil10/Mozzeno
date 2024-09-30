@@ -3,6 +3,7 @@ from datetime import timedelta
 import datetime as dt
 import glob
 import os
+from fixed_values import language_moz
 
 def last_day_of_month(any_day):
     next_month = any_day.replace(day=28) + timedelta(days=4)
@@ -33,10 +34,16 @@ def delete_file(max_file):
 
 def status_payment(old_list):
     status_number = []
-    on_time = 'Op tijd'
-    was_early = 'terugbetaling'
-    promise = 'Betalingsbelofte'
-    too_late = 'achterstallig'
+    if language_moz == 'NL':
+        on_time = 'Op tijd'
+        was_early = 'terugbetaling'
+        promise = 'Betalingsbelofte'
+        too_late = 'achterstallig'
+    elif language_moz == 'FR':
+        on_time = 'jour'
+        was_early = 'anticipé'
+        promise = 'paiement'
+        too_late = 'to be seen'
     for text in old_list:
         if on_time in text:
             new_status = 1

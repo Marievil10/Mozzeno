@@ -5,7 +5,7 @@ from functions import get_max_mozzeno_file, delete_file, status_payment
 import pandas as pd
 from datetime import date
 import gspread_dataframe
-from fixed_values import df_percent, bonus_received, gain_2023, start_capital
+from fixed_values import df_percent, bonus_received, gain_2023, start_capital, language_moz
 
 # received a Future Warning
 pd.set_option('future.no_silent_downcasting', True)
@@ -59,20 +59,31 @@ max_file = get_max_mozzeno_file(folder_path, file_type)
 df_file = pd.read_excel(max_file)
 sheet.clear()
 
-# creation of all the dataframes based on the csv-file (Dutch)
+# creation of all the dataframes based on the csv-file
 df = df_file.copy()
-df = df[['Lening toegekend op', 'Uw inschrijving', 'Terugbetaald kapitaal',
-         'Rente', 'Vooruitgang', 'Looptijd', 'Status']]
-df = df.rename(columns={'Lening toegekend op': 'Renewal date', 'Uw inschrijving': 'Invested',
-                        'Terugbetaald kapitaal': 'Paid back', 'Rente': 'Interest'})
+df3 = df_file.copy()
+if language_moz == 'FR':
+    df = df[['Octroyé le', 'Votre souscription', 'Capital remboursé',
+             'Intérêts', 'Progression', 'Durée', 'Statut']]
+    df = df.rename(columns={'Octroyé le': 'Renewal date', 'Votre souscription': 'Invested',
+                            'Capital remboursé': 'Paid back', 'Intérêts': 'Interest', 'Progression': 'Progress',
+                            'Durée': 'Duration', 'Statut': 'Status'})
+    df3 = df3[['Votre souscription', 'Taux d’intérêt de la série', 'Statut', 'Intérêts']]
+    df3 = df3.rename(columns={'Votre souscription': 'Node value', 'Taux d’intérêt de la série': 'Bruto',
+                              'Statut': 'Status', 'Intérêts': 'Interest'})
+else:
+    df = df[['Lening toegekend op', 'Uw inschrijving', 'Terugbetaald kapitaal',
+             'Rente', 'Vooruitgang', 'Looptijd', 'Status']]
+    df = df.rename(columns={'Lening toegekend op': 'Renewal date', 'Uw inschrijving': 'Invested',
+                            'Terugbetaald kapitaal': 'Paid back', 'Rente': 'Interest', 'Vooruitgang': 'Progress',
+                            'Looptijd': 'Duration'})
+    df3 = df3[['Uw inschrijving', 'Rentevoet van de serie', 'Status', 'Rente']]
+    df3 = df3.rename(columns={'Uw inschrijving': 'Node value', 'Rentevoet van de serie': 'Bruto',
+                              'Rente': 'Interest'})
 
 df2 = pd.DataFrame(columns=['Start capital', 'Gain', 'Current worth',
                             'Available', 'Gain percentage', 'Last updated',
                             'Withdrawn'])
-
-df3 = df_file.copy()
-df3 = df3[['Uw inschrijving', 'Rentevoet van de serie', 'Status', 'Rente']]
-df3 = df3.rename(columns={'Uw inschrijving': 'Node value', 'Rentevoet van de serie': 'Bruto'})
 
 # defining the edges of the dataframes as references for other dataframes
 end_of_info_df_right = df.shape[1]
@@ -88,12 +99,12 @@ today = date.today().strftime('%d/%m/%Y')
 # doing some transformations based on the information in the csv
 df['Status'] = status_payment(df['Status'])
 df['Remaining'] = df['Invested'] - df['Paid back']
-df['Remaining months'] = df['Looptijd'] - df['Vooruitgang']
+df['Remaining months'] = df['Duration'] - df['Progress']
 df['Renewal date'] = pd.to_datetime(df['Renewal date'], dayfirst=True)
 df['Fully paid back'] = ((df['Renewal date'].dt.to_period('M')) + df['Remaining months']).dt.to_timestamp()
 df['Fully paid back'] = df['Fully paid back'].dt.date
 df['Renewal date'] = df['Renewal date'].dt.date
-df = df.drop(['Looptijd', 'Vooruitgang', 'Remaining months'], axis=1)
+df = df.drop(['Duration', 'Progress', 'Remaining months'], axis=1)
 
 # some summary fields
 value_nodes = df['Invested'].sum()
@@ -122,7 +133,7 @@ df.sort_index(inplace=True)
 # filling in df3
 # filtering on only the ongoing, on time payments, as they are the most certain
 df3['Status'] = status_payment(df3['Status'])
-status_options = [1, 3, 4]
+status_options = [0, 1, 3, 4]
 df3 = df3[df3['Status'].isin(status_options)]
 df3['Bruto'] = round(df3['Bruto'], 2)
 df3 = pd.merge(df3, df_percent, on='Bruto')
@@ -131,16 +142,16 @@ df3['Total projected gain'] = round(df3['Node value'] * df3['Netto'] / 100, 2)
 # getting the totals and averages
 df3.loc[df3.index[-1], 'Node value'] = df3['Node value'].sum()
 df3.loc[df3.index[-1], 'Total projected gain'] = df3['Total projected gain'].sum()
-df3.loc[df3.index[-1], 'Rente'] = df3['Rente'].sum()
+df3.loc[df3.index[-1], 'Interest'] = df3['Interest'].sum()
 df3.loc[df3.index[-1], 'Bruto'] = df3['Bruto'].mean() / 100
 df3.loc[df3.index[-1], 'Netto'] = df3['Netto'].mean() / 100
-df3['Remaining gain'] = df3['Total projected gain'] - df3['Rente']
+df3['Remaining gain'] = df3['Total projected gain'] - df3['Interest']
 
 # leaving an empty column so the current year's gain has its separate field
 df3[''], df3['2024 gain'] = ['', '']
 total_gain = bonus_received + value_interest
 df3.loc[df3.index[-1], '2024 gain'] = total_gain - gain_2023
-df3 = df3.drop(['Rente', 'Status'], axis=1)
+df3 = df3.drop(['Interest', 'Status'], axis=1)
 df3 = df3.drop(df3.index[0:df3.shape[0] - 1])
 
 # filling in df2
@@ -165,4 +176,4 @@ gspread_dataframe.set_with_dataframe(worksheet=sheet,
                                      include_column_header=True)
 
 # deletion of the file to not overcrowd my downloads file
-delete_file(max_file)
+#delete_file(max_file)
