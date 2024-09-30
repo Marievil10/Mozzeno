@@ -111,7 +111,7 @@ This includes:
 
 <img width="648" alt="image" src="https://github.com/user-attachments/assets/93144da3-19b1-4cb2-ba8a-b659780e15db">
 
-## More
+## Important information
 When running the script, there will always be the question of whether or not you changed something to the amount of money. These are actions that are different from investing or receiving money. More specifically, I mean depositing or withdrawing money.
 
 As I said, this project can be uploaded in an empty sheet, as well as update an existing sheet. To have the correct calculations, it will start with checking if certain fields/columns already exist, namely 'Withdrawn' and 'Start capital'. If these fields are not found, or these fields contain value that cannot be used within the calculations, they will be retrieved from the fixed_values.py file. 
