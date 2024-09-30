@@ -1,6 +1,6 @@
 # packages used for the connection between the script and the Google sheet
 from credentials_file import get_credentials
-from functions import get_max_mozzeno_file, delete_file, status_payment
+from functions import get_max_mozzeno_file, delete_file, status_payment, language_mismatch
 # packages used for the dataframes
 import pandas as pd
 from datetime import date
@@ -63,23 +63,29 @@ sheet.clear()
 df = df_file.copy()
 df3 = df_file.copy()
 if language_moz == 'FR':
-    df = df[['Octroyé le', 'Votre souscription', 'Capital remboursé',
-             'Intérêts', 'Progression', 'Durée', 'Statut']]
-    df = df.rename(columns={'Octroyé le': 'Renewal date', 'Votre souscription': 'Invested',
-                            'Capital remboursé': 'Paid back', 'Intérêts': 'Interest', 'Progression': 'Progress',
-                            'Durée': 'Duration', 'Statut': 'Status'})
-    df3 = df3[['Votre souscription', 'Taux d’intérêt de la série', 'Statut', 'Intérêts']]
-    df3 = df3.rename(columns={'Votre souscription': 'Node value', 'Taux d’intérêt de la série': 'Bruto',
-                              'Statut': 'Status', 'Intérêts': 'Interest'})
+    try:
+        df = df[['Octroyé le', 'Votre souscription', 'Capital remboursé',
+                 'Intérêts', 'Progression', 'Durée', 'Statut']]
+        df = df.rename(columns={'Octroyé le': 'Renewal date', 'Votre souscription': 'Invested',
+                                'Capital remboursé': 'Paid back', 'Intérêts': 'Interest', 'Progression': 'Progress',
+                                'Durée': 'Duration', 'Statut': 'Status'})
+        df3 = df3[['Votre souscription', 'Taux d’intérêt de la série', 'Statut', 'Intérêts']]
+        df3 = df3.rename(columns={'Votre souscription': 'Node value', 'Taux d’intérêt de la série': 'Bruto',
+                                  'Statut': 'Status', 'Intérêts': 'Interest'})
+    except KeyError:
+        language_mismatch()
 else:
-    df = df[['Lening toegekend op', 'Uw inschrijving', 'Terugbetaald kapitaal',
-             'Rente', 'Vooruitgang', 'Looptijd', 'Status']]
-    df = df.rename(columns={'Lening toegekend op': 'Renewal date', 'Uw inschrijving': 'Invested',
-                            'Terugbetaald kapitaal': 'Paid back', 'Rente': 'Interest', 'Vooruitgang': 'Progress',
-                            'Looptijd': 'Duration'})
-    df3 = df3[['Uw inschrijving', 'Rentevoet van de serie', 'Status', 'Rente']]
-    df3 = df3.rename(columns={'Uw inschrijving': 'Node value', 'Rentevoet van de serie': 'Bruto',
-                              'Rente': 'Interest'})
+    try:
+        df = df[['Lening toegekend op', 'Uw inschrijving', 'Terugbetaald kapitaal',
+                 'Rente', 'Vooruitgang', 'Looptijd', 'Status']]
+        df = df.rename(columns={'Lening toegekend op': 'Renewal date', 'Uw inschrijving': 'Invested',
+                                'Terugbetaald kapitaal': 'Paid back', 'Rente': 'Interest', 'Vooruitgang': 'Progress',
+                                'Looptijd': 'Duration'})
+        df3 = df3[['Uw inschrijving', 'Rentevoet van de serie', 'Status', 'Rente']]
+        df3 = df3.rename(columns={'Uw inschrijving': 'Node value', 'Rentevoet van de serie': 'Bruto',
+                                  'Rente': 'Interest'})
+    except KeyError:
+        language_mismatch()
 
 df2 = pd.DataFrame(columns=['Start capital', 'Gain', 'Current worth',
                             'Available', 'Gain percentage', 'Last updated',
@@ -176,4 +182,4 @@ gspread_dataframe.set_with_dataframe(worksheet=sheet,
                                      include_column_header=True)
 
 # deletion of the file to not overcrowd my downloads file
-#delete_file(max_file)
+delete_file(max_file)

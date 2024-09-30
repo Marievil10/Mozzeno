@@ -61,3 +61,8 @@ def status_payment(old_list):
             new_status = 0
             status_number.append(new_status)
     return status_number
+
+
+def language_mismatch():
+    print('Language CSV file and fixed value do not match, please adjust and try again.')
+    sys.exit()
