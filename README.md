@@ -78,7 +78,7 @@ The dataframe also includes a summarizing row right under the header:
 
 
 The status summary can contain three different words:
-1. Good: all payments are on time
+1. Good: all payments are on time and/or paid in advance
 2. Anticipating: the borrower promised to pay
 3. Panic: one of the payments are not being made
 
@@ -115,3 +115,19 @@ This includes:
 When running the script, there will always be the question of whether or not you changed something to the amount of money. These are actions that are different from investing or receiving money. More specifically, I mean depositing or withdrawing money.
 
 As I said, this project can be uploaded in an empty sheet, as well as update an existing sheet. To have the correct calculations, it will start with checking if certain fields/columns already exist, namely 'Withdrawn' and 'Start capital'. If these fields are not found, or these fields contain value that cannot be used within the calculations, they will be retrieved from the fixed_values.py file. 
+
+## Popup button
+I created a popup that will show in the middle of your screen that gives you the choice of running or not running the main script to update your sheet. The language is again based on the one you defined in the fixed_values. 
+
+*Lay-out still to be updated.*
+
+Each button triggers another function:
+- Yes-button: runs the main.py script
+- No-button: does not run the main.py script
+- Close-button: closes the popup and ends the process
+
+> [!NOTE]
+> For the "full experience", run the popup_button.py file instead of the main.py-file.
+
+## Next steps
+A feature I would like to add is the monitoring of the folder in which the csvfiles get saved, and an automatic triggering of the popup window to start the process.

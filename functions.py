@@ -4,6 +4,7 @@ import datetime as dt
 import glob
 import os
 from fixed_values import language_moz
+import subprocess
 
 def last_day_of_month(any_day):
     next_month = any_day.replace(day=28) + timedelta(days=4)
@@ -29,6 +30,7 @@ def delete_file(max_file):
         os.remove(max_file)
         print('New information successfully uploaded.')
         print('File successfully deleted.')
+        sys.exit()
     else:
         print('Not deleted')
 
@@ -62,7 +64,17 @@ def status_payment(old_list):
             status_number.append(new_status)
     return status_number
 
-
 def language_mismatch():
     print('Language CSV file and fixed value do not match, please adjust and try again.')
     sys.exit()
+
+def yes_button_clicked():
+    subprocess.run(["python", "main.py"])
+
+def no_button_clicked():
+    if language_moz == 'NL':
+        no = 'Nee'
+        print(f"{no}-knop geklikt. Klik 'Sluiten' om het proces af te sluiten.")
+    else:
+        no = 'non'
+        print(f"Bouton-{no} cliqué. Cliquez sur 'Fermer' pour terminer le processus.")
