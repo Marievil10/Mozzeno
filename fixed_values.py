@@ -1,11 +1,11 @@
 import pandas as pd
 
 # these values are for me personally, feel free to fill in your own
-bonus_received = 4.9
+bonus_received = 4.95
 gain_2023 = 8.52
 start_capital = 500
 
-# acceptated values for language are 'NL' and 'FR', depending on in which language you downloaded your CSV.
+# accepted values for language are 'NL' and 'FR', depending on in which language you downloaded your CSV.
 language_moz = 'NL'
 
 # these values are from the Mozzeno site
