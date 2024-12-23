@@ -1,8 +1,10 @@
 import pandas as pd
 
 # these values are for me personally, feel free to fill in your own
-bonus_received = 4.95
+bonus_received = 5.02
 gain_2023 = 8.52
+gain_2024 = 0
+gain_years = gain_2023 + gain_2024
 start_capital = 500
 
 # accepted values for language are 'NL' and 'FR', depending on in which language you downloaded your CSV.
