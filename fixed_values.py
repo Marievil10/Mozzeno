@@ -1,9 +1,13 @@
 import pandas as pd
+import datetime as dt
 
 # these values are for me personally, feel free to fill in your own
-bonus_received = 5.02
+bonus_received = 5.87
 gain_2023 = 8.52
-gain_2024 = 0
+gain_2024 = 18.49
+today = dt.date.today()
+year = str(today.year)
+# update every year
 gain_years = gain_2023 + gain_2024
 start_capital = 500
 

@@ -5,7 +5,7 @@ from functions import get_max_mozzeno_file, delete_file, status_payment, languag
 import pandas as pd
 from datetime import date
 import gspread_dataframe
-from fixed_values import df_percent, bonus_received, gain_years, start_capital, language_moz
+from fixed_values import df_percent, bonus_received, gain_years, start_capital, language_moz, year
 
 # received a Future Warning
 pd.set_option('future.no_silent_downcasting', True)
@@ -154,9 +154,11 @@ df3.loc[df3.index[-1], 'Netto'] = df3['Netto'].mean() / 100
 df3['Remaining gain'] = df3['Total projected gain'] - df3['Interest']
 
 # leaving an empty column so the current year's gain has its separate field
-df3[''], df3['2024 gain'] = ['', '']
+df3[''] = None
+gain_column_name = year + ' gain'
+df3[gain_column_name] = None
 total_gain = bonus_received + value_interest
-df3.loc[df3.index[-1], '2024 gain'] = total_gain - gain_years
+df3.loc[df3.index[-1], gain_column_name] = total_gain - gain_years
 df3 = df3.drop(['Interest', 'Status'], axis=1)
 df3 = df3.drop(df3.index[0:df3.shape[0] - 1])
 
