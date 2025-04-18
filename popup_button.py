@@ -5,12 +5,10 @@ from fixed_values import language_moz
 if language_moz == 'NL':
     yes = 'Ja'
     no = 'Nee'
-    close = 'Sluiten'
     label = 'Nu het Mozzeno-script laten lopen?'
 else:
     yes = 'Oui'
     no = 'Non'
-    close = 'Fermer'
     label = 'Exécutez le script Mozzeno maintenant?'
 
 popup = tk.Tk()
@@ -18,11 +16,14 @@ popup.geometry('400x100')
 popup.eval('tk::PlaceWindow . center')
 popup.title("Mozzeno")
 
-# Creating a button widget
-button_no = tk.Button(popup, text=no, command=popup.destroy).place(x=200, y=30)
-button_yes = tk.Button(popup, text=yes, command=yes_button_clicked).place(x=150, y=30)
-button_close = tk.Button(popup, text=close, command=popup.destroy).place(x=165, y=60)
 label_text = tk.Label(popup, text=label)
-label_text.pack()
+label_text.pack(pady=5)
+
+button_frame = tk.Frame(popup)
+button_frame.pack(pady=10)
+button_yes = tk.Button(button_frame, text=yes, command=lambda: yes_button_clicked(popup)) # lambda needed to use arguments
+button_no = tk.Button(button_frame, text=no, command=popup.destroy)
+button_yes.grid(row=0, column=0, padx=10)
+button_no.grid(row=0, column=1, padx=10)
 
 popup.mainloop()

@@ -117,14 +117,13 @@ When running the script, there will always be the question of whether or not you
 As I said, this project can be uploaded in an empty sheet, as well as update an existing sheet. To have the correct calculations, it will start with checking if certain fields/columns already exist, namely 'Withdrawn' and 'Start capital'. If these fields are not found, or these fields contain value that cannot be used within the calculations, they will be retrieved from the fixed_values.py file. 
 
 ## Popup window
-I created a popup that will show in the middle of your screen that gives you the choice of running or not running the main script to update your sheet. The language is again based on the one you defined in the fixed_values. 
+I created a popup that will show in the middle of your screen that gives you the choice of running or not running the main script to update your sheet. The language is again based on the one you defined in the fixed_values. It closes automatically after choosing one option.
 
 *Lay-out still to be updated.*
 
 Each button triggers another function:
 - Yes-button: runs the main.py script
 - No-button: does not run the main.py script
-- Close-button: closes the popup and ends the process
 
 > [!NOTE]
 > The window is completely optional. No functionality of the main.py-file rests on the window. 

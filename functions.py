@@ -68,8 +68,9 @@ def language_mismatch():
     print('Language CSV file and fixed value do not match, please adjust and try again.')
     sys.exit()
 
-def yes_button_clicked():
+def yes_button_clicked(popup_window):
     subprocess.run(["python", "main.py"])
+    popup_window.destroy()
 
 def no_button_clicked():
     if language_moz == 'NL':
