@@ -11,7 +11,7 @@ from fixed_values import df_percent, bonus_received, gain_years, start_capital, 
 pd.set_option('future.no_silent_downcasting', True)
 
 # connecting to the correct file
-sheet = get_credentials('Revolut & Degiro', 'Mozzeno')
+sheet = get_credentials('name of file', 'name of sheet')
 
 # a check to see if Withdrawn is already filled in, basically to see if the sheet
 # has already been filled in general, or the script has already been used
@@ -53,7 +53,7 @@ else:
             start_capital = original_start_capital
 
 # finding the correct file in the download folder
-folder_path = r'/Users/marieperin/Downloads'
+folder_path = r'your_path'
 file_type = r'/*xlsx'
 max_file = get_max_mozzeno_file(folder_path, file_type)
 df_file = pd.read_excel(max_file)
