@@ -93,7 +93,7 @@ def determine_filedate(max_file):
 
 def first_weekday():
     now = dt.datetime.now()
-    return now.weekday() == 5 and now.hour == 18 and now.minute == 32
+    return now.weekday() == 5 and now.hour == 18 and now.minute == 58
 
-def run_everything():
-    subprocess.run(["python", "run_main_popup.py"])
+def run_file(script_name):
+    subprocess.run(["python", script_name])
