@@ -1,5 +1,5 @@
 import sys
-from datetime import timedelta
+from datetime import timedelta, datetime
 import datetime as dt
 import glob
 import os
@@ -79,3 +79,21 @@ def no_button_clicked():
     else:
         no = 'non'
         print(f"Bouton-{no} cliqué. Cliquez sur 'Fermer' pour terminer le processus.")
+
+def determine_filedate(max_file):
+    parts = max_file.split('_')
+    for part in parts:
+        if part.isdigit() and len(part) == 8:
+            try:
+                date_obj = datetime.strptime(part, "%Y%m%d").date()
+                return date_obj  # Format as DDMMYYYY
+            except ValueError:
+                pass
+    return None  # No valid date found
+
+def first_weekday():
+    now = dt.datetime.now()
+    return now.weekday() == 5 and now.hour == 18 and now.minute == 32
+
+def run_everything():
+    subprocess.run(["python", "run_main_popup.py"])
