@@ -3,8 +3,8 @@ from functions import get_max_mozzeno_file, determine_filedate, first_weekday, r
 from datetime import datetime
 import time
 
-sheet = get_credentials('Revolut & Degiro', 'Mozzeno')
-folder_path = r'/Users/marieperin/Downloads'
+sheet = get_credentials('name of file', 'name of sheet')
+folder_path = r'your_path'
 file_type = r'/*xlsx'
 max_file = get_max_mozzeno_file(folder_path, file_type)
 filedate = determine_filedate(max_file)
