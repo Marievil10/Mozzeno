@@ -125,10 +125,12 @@ Each button triggers another function:
 - Yes-button: runs the main.py script
 - No-button: does not run the main.py script
 
-> [!NOTE]
-> The window is completely optional. No functionality of the main.py-file rests on the window. 
-> 
-> For the "full experience", run the popup_button.py-file instead of the main.py-file.
+This is fully optional. No functionality of the main.py-file rests on the scheduling.
+
+## Scheduling
+It's finally here, the scheduling option! I implemented it so that it compares the date of your Mozzeno-file, and the last, so you don't have outdated information in your sheet.
+
+Once again, no functionality of the main.py-file nor run_main_popup.py rests on the scheduling. It's all completely optional.
 
 ## Next steps
 A feature I would like to add is the monitoring of the folder in which the csv-files get saved, and an automatic triggering of the popup window to start the process.
