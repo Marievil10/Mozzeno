@@ -64,9 +64,9 @@ if language_moz == 'FR':
         df = df.rename(columns={'Octroyé le': 'Renewal date', 'Votre souscription': 'Invested',
                                 'Capital remboursé': 'Paid back', 'Intérêts': 'Interest', 'Progression': 'Progress',
                                 'Durée': 'Duration', 'Statut': 'Status'})
-        df3 = df3[['Votre souscription', 'Taux d’intérêt de la série', 'Statut', 'Intérêts']]
+        df3 = df3[['Votre souscription', 'Taux d’intérêt de la série', 'Statut', 'Intérêts', 'Durée']]
         df3 = df3.rename(columns={'Votre souscription': 'Node value', 'Taux d’intérêt de la série': 'Bruto',
-                                  'Statut': 'Status', 'Intérêts': 'Interest'})
+                                  'Statut': 'Status', 'Intérêts': 'Interest', 'Durée': 'Duration'})
     except KeyError:
         language_mismatch()
 else:
@@ -76,9 +76,9 @@ else:
         df = df.rename(columns={'Lening toegekend op': 'Renewal date', 'Uw inschrijving': 'Invested',
                                 'Kapitaal al terugbetaald': 'Paid back', 'Rente': 'Interest', 'Vooruitgang': 'Progress',
                                 'Looptijd': 'Duration'})
-        df3 = df3[['Uw inschrijving', 'Rentevoet van de serie', 'Status', 'Rente']]
+        df3 = df3[['Uw inschrijving', 'Rentevoet van de serie', 'Status', 'Rente', 'Looptijd']]
         df3 = df3.rename(columns={'Uw inschrijving': 'Node value', 'Rentevoet van de serie': 'Bruto',
-                                  'Rente': 'Interest'})
+                                  'Rente': 'Interest', 'Looptijd': 'Duration'})
     except KeyError:
         language_mismatch()
 
@@ -87,7 +87,7 @@ df2 = pd.DataFrame(columns=['Start capital', 'Gain', 'Current worth',
                             'Withdrawn'])
 
 # defining the edges of the dataframes as references for other dataframes
-end_of_info_df_right = df.shape[1] # columns
+end_of_info_df_right = df.shape[1]  # columns
 end_of_info_df_bottom = df.shape[0] # rows
 start_of_general_df = end_of_info_df_right + 2
 start_of_est_df = end_of_info_df_bottom + 4
@@ -137,7 +137,9 @@ status_options = [0, 1, 3, 4]
 df3 = df3[df3['Status'].isin(status_options)]
 df3['Bruto'] = round(df3['Bruto'], 2)
 df3 = pd.merge(df3, df_percent, on='Bruto')
-df3['Total projected gain'] = round(df3['Node value'] * df3['Netto'] / 100, 2)
+df3['Duration'] = df3['Duration'] / 12
+df3['Factor'] = df3['Duration'] * df3['Netto'] / 100 + 1
+df3['Total projected gain'] = round(df3['Node value'] * df3['Factor'] - df3['Node value'], 2)
 
 # getting the totals and averages
 df3.loc[df3.index[-1], 'Node value'] = df3['Node value'].sum()
@@ -153,7 +155,7 @@ gain_column_name = year + ' gain'
 df3[gain_column_name] = None
 total_gain = bonus_received + value_interest
 df3.loc[df3.index[-1], gain_column_name] = total_gain - gain_years
-df3 = df3.drop(['Interest', 'Status'], axis=1)
+df3 = df3.drop(['Interest', 'Status', 'Factor', 'Duration'], axis=1)
 df3 = df3.drop(df3.index[0:df3.shape[0] - 1])
 
 # filling in df2

@@ -30,6 +30,6 @@ if __name__ == "__main__":
             else:
                 run_file("run_main_popup.py")
                 time.sleep(86400)
-        time.sleep(10)
+        time.sleep(3600)
 
 
