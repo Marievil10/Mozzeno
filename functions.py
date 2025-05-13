@@ -97,3 +97,26 @@ def first_weekday():
 
 def run_file(script_name):
     subprocess.run(["python", script_name])
+
+def get_float_from_cell(sheet, label):
+    cell = sheet.find(label)
+    if cell is None:
+        return 0.0
+    value = sheet.cell(cell.row + 1, cell.col).value
+    if not value:  # Covers None, empty string, and other falsy values
+        return 0.0
+    try:
+        return float(str(value).replace(',', '.').strip())
+    except ValueError:
+        print(f"Warning: Could not convert value '{value}' under label '{label}' to float.")
+        return 0.0
+
+def update_amount_if_needed(current_value, action_type):
+    response = input(f'Did you {action_type} money? Y/N ').strip().upper()
+    if response == 'Y':
+        try:
+            amount = float(input('How much? '))
+            return current_value + amount
+        except ValueError:
+            print("Invalid amount entered. Skipping update.")
+    return current_value

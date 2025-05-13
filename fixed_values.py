@@ -9,7 +9,7 @@ today = dt.date.today()
 year = str(today.year)
 # update every year
 gain_years = gain_2023 + gain_2024
-start_capital = 500
+DEFAULT_START_CAPITAL = 500.00
 
 # accepted values for language are 'NL' and 'FR', depending on in which language you downloaded your CSV.
 language_moz = 'NL'
