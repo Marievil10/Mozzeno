@@ -76,7 +76,7 @@ df['Status'] = status_payment(df['Status'])
 df['Remaining'] = df['Invested'] - df['Paid back']
 df['Remaining months'] = df['Duration'] - df['Progress']
 df['Renewal date'] = pd.to_datetime(df['Renewal date'], dayfirst=True)
-df['Fully paid back'] = ((df['Renewal date'].dt.to_period('M')) + df['Remaining months']).dt.to_timestamp()
+df['Fully paid back'] = ((df['Renewal date'].dt.to_period('M')) + df['Duration']).dt.to_timestamp()
 df['Fully paid back'] = df['Fully paid back'].dt.date
 df['Renewal date'] = df['Renewal date'].dt.date
 df = df.drop(['Duration', 'Progress', 'Remaining months'], axis=1)
