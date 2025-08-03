@@ -1,5 +1,5 @@
 # packages used for the connection between the script and the Google sheet
-from functions import delete_file, status_payment, language_mismatch, get_float_from_cell, update_amount_if_needed
+from functions import delete_file, status_payment, get_float_from_cell, update_amount_if_needed
 from scheduling import max_file, sheet
 
 # packages used for the dataframes
@@ -16,7 +16,7 @@ pd.set_option('future.no_silent_downcasting', True)
 money_action = input('Did you withdraw or deposit money? Y/N ').strip().upper()
 withdrawn = get_float_from_cell(sheet, 'Withdrawn')
 start_capital = get_float_from_cell(sheet, 'Start capital')
-if start_capital == 0:
+if start_capital is None or 0:
     start_capital = DEFAULT_START_CAPITAL
 
 if money_action == 'Y':
@@ -41,8 +41,8 @@ if language_moz == 'FR':
         df3 = df3[['Votre souscription', 'Taux d’intérêt de la série', 'Statut', 'Intérêts', 'Durée']]
         df3 = df3.rename(columns={'Votre souscription': 'Node value', 'Taux d’intérêt de la série': 'Bruto',
                                   'Statut': 'Status', 'Intérêts': 'Interest', 'Durée': 'Duration'})
-    except KeyError:
-        language_mismatch()
+    except KeyError as e:
+        print(e)
 else:
     try:
         df = df[['Lening toegekend op', 'Uw inschrijving', 'Kapitaal al terugbetaald',
@@ -53,18 +53,12 @@ else:
         df3 = df3[['Uw inschrijving', 'Rentevoet van de serie', 'Status', 'Rente', 'Looptijd']]
         df3 = df3.rename(columns={'Uw inschrijving': 'Node value', 'Rentevoet van de serie': 'Bruto',
                                   'Rente': 'Interest', 'Looptijd': 'Duration'})
-    except KeyError:
-        language_mismatch()
+    except KeyError as e:
+        print(e)
 
 df2 = pd.DataFrame(columns=['Start capital', 'Gain', 'Current worth',
                             'Available', 'Gain percentage', 'Last updated',
                             'Withdrawn'])
-
-# defining the edges of the dataframes as references for other dataframes
-end_of_info_df_right = df.shape[1]  # columns
-end_of_info_df_bottom = df.shape[0] # rows
-start_of_general_df = end_of_info_df_right + 2
-start_of_est_df = end_of_info_df_bottom + 4
 
 # fixed values because they are in the past or not mine
 first_invested_date = date(2023, 8, 29).strftime('%d/%m/%Y')
@@ -138,6 +132,14 @@ available_amount = round(start_capital - value_remaining + total_gain - withdraw
 df2.loc[0] = [start_capital, total_gain, worth_portfolio,
               available_amount, gain_percentage, today, withdrawn]
 
+df = df[~df["Status"].isin([2])]
+
+# defining the edges of the dataframes as references for other dataframes
+end_of_info_df_right = df.shape[1]  # columns
+end_of_info_df_bottom = df.shape[0] # rows
+start_of_general_df = end_of_info_df_right + 2
+start_of_est_df = end_of_info_df_bottom + 3
+
 gspread_dataframe.set_with_dataframe(worksheet=sheet,
                                      dataframe=df,
                                      include_column_header=True)
@@ -153,4 +155,4 @@ gspread_dataframe.set_with_dataframe(worksheet=sheet,
                                      include_column_header=True)
 
 # deletion of the file to not overcrowd my downloads file
-#delete_file(max_file)
+delete_file(max_file)
