@@ -6,14 +6,15 @@ from scheduling import max_file, sheet
 import pandas as pd
 from datetime import date
 import gspread_dataframe
-from fixed_values import df_percent, bonus_received, gain_years, DEFAULT_START_CAPITAL, language_moz, year
+from fixed_values import df_percent, bonus_received, gain_years, DEFAULT_START_CAPITAL, column_config, language_moz, year
 
 # received a Future Warning
 pd.set_option('future.no_silent_downcasting', True)
 
 # a check to see if Withdrawn is already filled in, basically to see if the sheet
 # has already been filled in general, or the script has already been used
-money_action = input('Did you withdraw or deposit money? Y/N ').strip().upper()
+# money_action = input('Did you withdraw or deposit money? Y/N ').strip().upper()
+money_action = 'N'
 withdrawn = get_float_from_cell(sheet, 'Withdrawn')
 start_capital = get_float_from_cell(sheet, 'Start capital')
 if start_capital is None or 0:
@@ -31,30 +32,13 @@ sheet.clear()
 df = df_file.copy()
 df3 = df_file.copy()
 
-if language_moz == 'FR':
+if language_moz in column_config:
     try:
-        df = df[['Octroyé le', 'Votre souscription', 'Capital remboursé',
-                 'Intérêts', 'Progression', 'Durée', 'Statut']]
-        df = df.rename(columns={'Octroyé le': 'Renewal date', 'Votre souscription': 'Invested',
-                                'Capital remboursé': 'Paid back', 'Intérêts': 'Interest', 'Progression': 'Progress',
-                                'Durée': 'Duration', 'Statut': 'Status'})
-        df3 = df3[['Votre souscription', 'Taux d’intérêt de la série', 'Statut', 'Intérêts', 'Durée']]
-        df3 = df3.rename(columns={'Votre souscription': 'Node value', 'Taux d’intérêt de la série': 'Bruto',
-                                  'Statut': 'Status', 'Intérêts': 'Interest', 'Durée': 'Duration'})
+        cfg = column_config[language_moz]
+        df = df[cfg['df']['columns']].rename(columns=cfg['df']['rename'])
+        df3 = df3[cfg['df3']['columns']].rename(columns=cfg['df3']['rename'])
     except KeyError as e:
-        print(e)
-else:
-    try:
-        df = df[['Lening toegekend op', 'Uw inschrijving', 'Kapitaal al terugbetaald',
-                 'Rente', 'Vooruitgang', 'Looptijd', 'Status']]
-        df = df.rename(columns={'Lening toegekend op': 'Renewal date', 'Uw inschrijving': 'Invested',
-                                'Kapitaal al terugbetaald': 'Paid back', 'Rente': 'Interest', 'Vooruitgang': 'Progress',
-                                'Looptijd': 'Duration'})
-        df3 = df3[['Uw inschrijving', 'Rentevoet van de serie', 'Status', 'Rente', 'Looptijd']]
-        df3 = df3.rename(columns={'Uw inschrijving': 'Node value', 'Rentevoet van de serie': 'Bruto',
-                                  'Rente': 'Interest', 'Looptijd': 'Duration'})
-    except KeyError as e:
-        print(e)
+        print(f"Missing expected column for {language_moz}: {e}")
 
 df2 = pd.DataFrame(columns=['Start capital', 'Gain', 'Current worth',
                             'Available', 'Gain percentage', 'Last updated',
