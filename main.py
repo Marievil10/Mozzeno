@@ -13,8 +13,7 @@ pd.set_option('future.no_silent_downcasting', True)
 
 # a check to see if Withdrawn is already filled in, basically to see if the sheet
 # has already been filled in general, or the script has already been used
-# money_action = input('Did you withdraw or deposit money? Y/N ').strip().upper()
-money_action = 'N'
+money_action = input('Did you withdraw or deposit money? Y/N ').strip().upper()
 withdrawn = get_float_from_cell(sheet, 'Withdrawn')
 start_capital = get_float_from_cell(sheet, 'Start capital')
 if start_capital is None or 0:
